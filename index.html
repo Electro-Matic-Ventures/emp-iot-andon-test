@@ -39,7 +39,7 @@
                 redirect: 'follow'
             };
             // make API call with parameters and use promises to get response
-            fetch("https://b3ngnsgr8c.execute-api.us-west-2.amazonaws.com/default/", requestOptions)
+            fetch("https://b3ngnsgr8c.execute-api.us-west-2.amazonaws.com/default/HelloWorldFunction", requestOptions)
             .then(response => response.text())
             .then(result => alert(JSON.parse(result).body))
             .catch(error => console.log('error', error));
