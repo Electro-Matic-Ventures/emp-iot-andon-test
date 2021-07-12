@@ -1,6 +1,7 @@
 // define the callAPI function that takes a first name and last name as parameters
 var callAPI = (firstName,lastName)=>{
-    document.getElementById("lname").value = 'newname';
+    field = document.getElementById("lName");
+    field.value = 'newname';
     // // instantiate a headers object
     // var myHeaders = new Headers();
     // // add content type header to object
