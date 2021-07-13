@@ -6,65 +6,51 @@
     <link rel="stylesheet" href="style.css">
     <script src="scripts.js"></script>
 </head>
-<body>
-    <table>
-        <tr>
-            <th colspan="2">
-                KP8
-            </th>
-        </tr>
-        <tr>
-            <td>
-                <input type="button" id="b07" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-            <td>
-                <input type="button" id="b03" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input type="button" id="b06" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-            <td>
-                <input type="button" id="b02" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input type="button" id="b05" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-            <td>
-                <input type="button" id="b01" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input type="button" id="b04" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-            <td>
-                <input type="button" id="b00" class="kp8Button" onClick="toggleGroup(this)">
-            </td>
-        </tr>
-        <tr>
-            <td class="bottomRow"></td>
-            <td class="bottomRow"></td>
-        </tr>
-    </table>
-    <table style="border:0px;">
-        <tr>
-            <td>
-                <input type="button" value="test scan" onClick="apiScan()"></input>
-            </td>
-        </tr>
-    </table>
-    <!--
-    <form>
-        <label>First Name :</label>
-        <input type="text" id="fName">
-        <label>Last Name :</label>
-        <input type="text" id="lName">
-        <button type="button" onclick="callAPI('','')">Call API</button>
-    </form>
-    -->
+<body onload="apiScan();">
+    <div id="kp8">
+        <table>
+            <tr>
+                <th colspan="2">
+                    KP8
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" id="b07" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+                <td>
+                    <input type="button" id="b03" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" id="b06" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+                <td>
+                    <input type="button" id="b02" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" id="b05" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+                <td>
+                    <input type="button" id="b01" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" id="b04" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+                <td>
+                    <input type="button" id="b00" class="kp8Button" onClick="toggleGroup(this)">
+                </td>
+            </tr>
+            <tr>
+                <td class="bottomRow"></td>
+                <td class="bottomRow"></td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>

@@ -75,22 +75,22 @@ async function apiCall(rawBody, endPoint){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type","application/json");
     var requestOptions = {
-        method : 'POST',
+        method : "POST",
         headers : myHeaders,
         body : rawBody,
-        redirect : 'follow'
+        redirect : "follow"
     };
     const response = await fetch(endPoint, requestOptions);
     const ret = await response.json();
-    return ret['body'];
+    return ret["body"];
 }
 
 async function apiScan(){
-    var selectedButton = getSelectedButton();
     var rawBody = "";
     var endPoint = apiPrefix() + "scan";
     const data = await apiCall(rawBody, endPoint);
-    buildScanTable(data['Items']);
+    var table = buildTable(data["Items"], "scan", "body", 0);
+    drawTable(table, "body", 0);
     console.log(data);
 }
 
@@ -129,22 +129,52 @@ function apiDelete(selectedButton){
     apiCall(rawBody, endPoint);
 }
 
-async function buildScanTable(data){
-    var table = document.createElement('table');
-    var tr;
-    var td;
+function buildTable(data, type){
+    var table = document.createElement("table");
+    table.className += type;
     for (const entry in data){
-        tr = document.createElement('tr');
-        buildTd(tr, data[entry]["address"]);
-        buildTd(tr, data[entry]["message"]);
-        buildTd(tr, data[entry]["subscribers"]);
-        table.appendChild(tr)
+        table.appendChild(buildTr(data[entry]));
+        buildSubTd(table, data[entry]["subscribers"]);
     }
-    document.getElementsByTagName("body")[0].appendChild(table);
+    return table
 }
 
-async function buildTd(tr, data){
-    var td = document.createElement('td');
+function buildTr(data){
+    var tr = document.createElement("tr");
+    var rowSpan = data["subscribers"].length;
+    tr.appendChild(buildTd(data["address"], rowSpan));
+    tr.appendChild(buildTd(data["message"], rowSpan));
+    return tr
+}
+
+function buildTd(data, rowSpan){
+    var td = document.createElement("td");
+    td.rowSpan = rowSpan;
     td.appendChild(document.createTextNode(data));
-    tr.appendChild(td);
+    return td
+}
+
+function buildSubTd(table, data){
+    var tr;
+    var name;
+    var pn;
+    for (const entry in data){
+        name = data[entry]["name"];
+        pn = data[entry]["phoneNumber"];
+        if (entry=="0"){
+            tr = document.createElement('tr');
+            tr = table.rows[table.rows.length - 1];
+            tr.appendChild(buildTd(name, 1));
+            tr.appendChild(buildTd(pn, 1));
+        }else{
+            tr = document.createElement('tr');
+            tr.appendChild(buildTd(name, 1));
+            tr.appendChild(buildTd(pn, 1));
+            table.appendChild(tr);
+        }
+    }
+}
+
+function drawTable(table, element, index){
+    document.getElementsByTagName(element)[index].appendChild(table);
 }
