@@ -7,9 +7,44 @@ label, button {
     font-size: 20px;
     margin-left: 40px;
     }
- input {
+input {
     color: #232F3E;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 20px;
     margin-left: 20px;
+    }
+table{
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: 1px solid #000000;
+    }
+th {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    font-family: "Consolas";
+    font-weight: bold;
+    font-size: 40px;
+    text-align: center;
+    }
+td {
+    padding: 0px;
+    text-align: center;
+    vertical-align: middle;
+    width: 100px;
+    height: 100px;
+    }
+td.bottomRow {
+    height: 20px;
+    }
+input[type=button]{
+    border: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 12%;
+    margin-bottom: 0px;
+    padding: 0px;
+    width: 90%;
+    height: 90%;
     }
