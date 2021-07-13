@@ -1,4 +1,9 @@
 // define the callAPI function that takes a first name and last name as parameters
+
+function selectButton(thisButton){
+    thisButton.style.backgroundColor = rgb(200, 0, 0);
+}
+
 var callAPI = (firstName,lastName)=>{
     field = document.getElementById("lName");
     field.value = 'newname';
