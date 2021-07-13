@@ -137,9 +137,8 @@ function apiUpdate(selectedButton){
     apiCall(rawBody, endPoint);
 }
 
-function apiDelete(selectedButton){
-    var address = generateAddress(selectedButton);
-    var rawBody = JSON.stringify({"address":address});
+function apiDelete(address, message){
+    var rawBody = JSON.stringify({"address":address, "message":message});
     var endPoint = apiPrefix() + "delete";
     apiCall(rawBody, endPoint);
 }
@@ -161,6 +160,7 @@ function buildTr(data, type){
     var tr = document.createElement("tr");
     tr.className += type;
     var rowSpan = data["subscribers"].length;
+    tr.appendChild(addRemoveButton(data));
     tr.appendChild(buildTd(data["address"], rowSpan, type));
     tr.appendChild(buildTd(data["message"], rowSpan, type));
     return tr
@@ -214,4 +214,21 @@ function blankRow(){
 
 function removeTable(id){
     document.getElementById(id).remove();
+}
+
+function addRemoveButton(data){
+    var td = document.createElement('td');
+    td.className += "btnRemove";
+    td.id = '{"address":"' + data["address"] + '", "message":"' + data["message"] + '"}';
+    td.rowSpan = data["subscribers"].length;
+    td.appendChild(generateButton("remove", data));
+    return td
+}
+
+function generateButton(label, data){
+    var btn = document.createElement('input');
+    btn.type = "button";
+    btn.value = label;
+    btn.addEventListener("click", function(){apiDelete(data["address"], data["message"]);});
+    return btn
 }

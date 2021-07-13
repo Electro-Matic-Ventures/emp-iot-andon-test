@@ -40,7 +40,7 @@ td.bottomRow {
     }
 
 input[type=button]{
-    border: 0px;
+    border: 2px solid #000000;
     margin-left: 0px;
     margin-right: 0px;
     margin-top: 12%;
