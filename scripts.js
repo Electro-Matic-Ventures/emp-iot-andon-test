@@ -90,6 +90,7 @@ async function apiScan(){
     var rawBody = "";
     var endPoint = apiPrefix() + "scan";
     const data = await apiCall(rawBody, endPoint);
+    buildScanTable(data['Items']);
     console.log(data);
 }
 
@@ -128,25 +129,22 @@ function apiDelete(selectedButton){
     apiCall(rawBody, endPoint);
 }
 
-/*
-var callAPI = (firstName,lastName)=>{
-    // instantiate a headers object
-    var myHeaders = new Headers();
-    // add content type header to object
-    myHeaders.append("Content-Type", "application/json");
-    // using built in JSON utility package turn object to string and store in a variable
-    var raw = JSON.stringify({"firstName":firstName,"lastName":lastName});
-    // create a JSON object with parameters for API call and store in a variable
-    var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-    };
-    // make API call with parameters and use promises to get response
-    fetch("https://bpr3fcc8ua.execute-api.us-west-2.amazonaws.com/dev", requestOptions)
-    .then(response => response.text())
-    .then(result => alert(JSON.parse(result).body))
-    .catch(error => console.log('error', error));
+async function buildScanTable(data){
+    var table = document.createElement('table');
+    var tr;
+    var td;
+    for (const entry in data){
+        tr = document.createElement('tr');
+        buildTd(tr, data[entry]["address"]);
+        buildTd(tr, data[entry]["message"]);
+        buildTd(tr, data[entry]["subscribers"]);
+        table.appendChild(tr)
+    }
+    document.getElementsByTagName("body")[0].appendChild(table);
 }
-*/
+
+async function buildTd(tr, data){
+    var td = document.createElement('td');
+    td.appendChild(document.createTextNode(data));
+    tr.appendChild(td);
+}
