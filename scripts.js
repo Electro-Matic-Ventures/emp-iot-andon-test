@@ -18,11 +18,22 @@ function getPromise(data){
     return data;
 }
 
+function scanId(){
+    return "scanAllButtons"
+}
+
+function queryId(){
+    var id = "queryButton"
+    return id
+}
+
+
 function toggleButton(thisButton){
     var color = getButtonColor(thisButton);
     switch (color){
         case buttonOff():
             color = buttonOn();
+            apiQuery(thisButton);
             break;
         case buttonOn():
             color = buttonOff();
@@ -45,10 +56,12 @@ function toggleGroup(thisButton){
             color = toggleButton(thisButton);
         }else{
             color = buttonOff();
+            try {
+                removeTable(queryId());
+            }catch{}
         }
         buttons[pBtn].style.backgroundColor = color;
     }
-    apiQuery(thisButton);
 }
 
 function getSelectedButton(){
@@ -90,7 +103,7 @@ async function apiScan(){
     var rawBody = "";
     var endPoint = apiPrefix() + "scan";
     const data = await apiCall(rawBody, endPoint);
-    var table = buildTable(data["Items"], "scan");
+    var table = buildTable(data["Items"], scanId());
     drawTable(table, "body", 0);
 }
 
@@ -99,7 +112,7 @@ async function apiQuery(thisButton){
     var rawBody = JSON.stringify({"address":address});
     var endPoint = apiPrefix() + "query";
     const data = await apiCall(rawBody, endPoint);
-    var table = buildTable(data["Items"], "buttonQuery");
+    var table = buildTable(data["Items"], queryId());
     drawTable(table, "body", 0);
 }
 
@@ -134,29 +147,35 @@ function apiDelete(selectedButton){
 function buildTable(data, type){
     var table = document.createElement("table");
     table.className += type;
+    table.id = type;
     for (const entry in data){
-        table.appendChild(buildTr(data[entry]));
-        buildSubTd(table, data[entry]["subscribers"]);
+        table.appendChild(buildTr(data[entry], type));
+        buildSubTd(table, data[entry]["subscribers"], type);
+        table.appendChild(blankRow());
+        
     }
     return table
 }
 
-function buildTr(data){
+function buildTr(data, type){
     var tr = document.createElement("tr");
+    tr.className += type;
     var rowSpan = data["subscribers"].length;
-    tr.appendChild(buildTd(data["address"], rowSpan));
-    tr.appendChild(buildTd(data["message"], rowSpan));
+    tr.appendChild(buildTd(data["address"], rowSpan, type));
+    tr.appendChild(buildTd(data["message"], rowSpan, type));
     return tr
 }
 
-function buildTd(data, rowSpan){
+function buildTd(data, rowSpan, type){
     var td = document.createElement("td");
+    td.className += type;
+    td.id = type;
     td.rowSpan = rowSpan;
     td.appendChild(document.createTextNode(data));
     return td
 }
 
-function buildSubTd(table, data){
+function buildSubTd(table, data, type){
     var tr;
     var name;
     var pn;
@@ -164,14 +183,14 @@ function buildSubTd(table, data){
         name = data[entry]["name"];
         pn = data[entry]["phoneNumber"];
         if (entry=="0"){
-            tr = document.createElement('tr');
             tr = table.rows[table.rows.length - 1];
-            tr.appendChild(buildTd(name, 1));
-            tr.appendChild(buildTd(pn, 1));
+            tr.appendChild(buildTd(name, 1, type));
+            tr.appendChild(buildTd(pn, 1, type));
         }else{
             tr = document.createElement('tr');
-            tr.appendChild(buildTd(name, 1));
-            tr.appendChild(buildTd(pn, 1));
+            tr.className += type;
+            tr.appendChild(buildTd(name, 1, type));
+            tr.appendChild(buildTd(pn, 1, type));
             table.appendChild(tr);
         }
     }
@@ -179,4 +198,20 @@ function buildSubTd(table, data){
 
 function drawTable(table, element, index){
     document.getElementsByTagName(element)[index].appendChild(table);
+}
+
+function blankRow(){
+    var tr = document.createElement('tr');
+    tr.className += "blank";
+    tr.id = "blank";
+    var td = document.createElement('td')
+    td.className += "blank";
+    td.id = "blank";
+    td.colSpan = 4;
+    tr.appendChild(td);
+    return tr
+}
+
+function removeTable(id){
+    document.getElementById(id).remove();
 }
