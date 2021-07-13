@@ -6,6 +6,9 @@ table{
     border-collapse: collapse;
     border-spacing: 0px;
     border: 1px solid #000000;
+    font-weight: bolder;
+    font-family: helvetica;
+    font-size: 20px;
     }
 
 th {
@@ -13,7 +16,7 @@ th {
     padding-right: 0px;
     padding-top: 5px;
     padding-bottom: 0px;
-    font-family: "Consolas";
+    font-family: helvetica;
     font-weight: bold;
     font-size: 40px;
     text-align: center;
@@ -49,5 +52,6 @@ input[type=button]{
     }
 
 table.scan{
+    width: 90%;
     border: 0px solid #000000;
 }

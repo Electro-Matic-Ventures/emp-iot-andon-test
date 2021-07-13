@@ -48,6 +48,7 @@ function toggleGroup(thisButton){
         }
         buttons[pBtn].style.backgroundColor = color;
     }
+    apiQuery(thisButton);
 }
 
 function getSelectedButton(){
@@ -89,16 +90,17 @@ async function apiScan(){
     var rawBody = "";
     var endPoint = apiPrefix() + "scan";
     const data = await apiCall(rawBody, endPoint);
-    var table = buildTable(data["Items"], "scan", "body", 0);
+    var table = buildTable(data["Items"], "scan");
     drawTable(table, "body", 0);
-    console.log(data);
 }
 
-function apiQuery(selectedButton){
-    var address = generateAddress(selectedButton);
+async function apiQuery(thisButton){
+    var address = generateAddress(thisButton.id);
     var rawBody = JSON.stringify({"address":address});
     var endPoint = apiPrefix() + "query";
-    apiCall(rawBody, endPoint);
+    const data = await apiCall(rawBody, endPoint);
+    var table = buildTable(data["Items"], "buttonQuery");
+    drawTable(table, "body", 0);
 }
 
 function apiCreate(selectedButton){
