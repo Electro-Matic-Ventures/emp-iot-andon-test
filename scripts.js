@@ -1,7 +1,18 @@
 // define the callAPI function that takes a first name and last name as parameters
 
 function selectButton(thisButton){
-    thisButton.style.backgroundColor = rgb(200, 0, 0);
+    const btnGray = "rgb(102, 102, 102)";
+    const btnRed = "rgb(200, 0, 0)";
+    var color = getComputedStyle(thisButton)["background-color"];
+    switch (color){
+        case btnGray:
+            color = btnRed;
+            break;
+        case btnRed:
+            color = btnGray;
+            break;
+    }
+    thisButton.style.backgroundColor = color;
 }
 
 var callAPI = (firstName,lastName)=>{
