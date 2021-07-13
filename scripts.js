@@ -33,7 +33,8 @@ function toggleButton(thisButton){
     switch (color){
         case buttonOff():
             color = buttonOn();
-            apiQuery(thisButton);
+            var address = generateAddress(thisButton);
+            apiQuery(address);
             break;
         case buttonOn():
             color = buttonOff();
@@ -82,7 +83,7 @@ function getSelectedButton(){
 }
 
 function generateAddress(selectedButton){
-    return "00" + selectedButton.substr(selectedButton.length - 2);
+    return "00" + selectedButton.id.substr(selectedButton.id.length - 2);
 }
 
 async function apiCall(rawBody, endPoint){
@@ -107,40 +108,64 @@ async function apiScan(){
     drawTable(table, "body", 0);
 }
 
-async function apiQuery(thisButton){
-    var address = generateAddress(thisButton.id);
-    var rawBody = JSON.stringify({"address":address});
+async function apiQuery(address){
+    var rawBody = JSON.stringify(
+        {
+            "address":address
+        }
+    );
     var endPoint = apiPrefix() + "query";
     const data = await apiCall(rawBody, endPoint);
     var table = buildTable(data["Items"], queryId());
     drawTable(table, "body", 0);
 }
 
-function apiCreate(selectedButton){
-    var address = generateAddress(selectedButton);
-    var rawBody = JSON.stringify({"address":address});
+function apiCreate(address, message, subscribers){
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message, 
+            "subscribers":subscribers
+        }
+    );
     var endPoint = apiPrefix() + "create";
     apiCall(rawBody, endPoint);
 }
 
-function apiRead(selectedButton){
-    var address = generateAddress(selectedButton);
-    var rawBody = JSON.stringify({"address":address});
+function apiRead(address, message){
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message
+        }
+    );
     var endPoint = apiPrefix() + "read";
     apiCall(rawBody, endPoint);
 }
 
-function apiUpdate(selectedButton){
-    var address = generateAddress(selectedButton);
-    var rawBody = JSON.stringify({"address":address});
+function apiUpdate(address, message, subscribers){
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message, 
+            "subscribers":subscribers
+        }
+    );
     var endPoint = apiPrefix() + "update";
     apiCall(rawBody, endPoint);
 }
 
 function apiDelete(address, message){
-    var rawBody = JSON.stringify({"address":address, "message":message});
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message
+        }
+    );
     var endPoint = apiPrefix() + "delete";
     apiCall(rawBody, endPoint);
+    removeTable(queryId());
+    apiQuery(address);
 }
 
 function buildTable(data, type){
@@ -219,14 +244,15 @@ function removeTable(id){
 function addRemoveButton(data){
     var td = document.createElement('td');
     td.className += "btnRemove";
-    td.id = '{"address":"' + data["address"] + '", "message":"' + data["message"] + '"}';
+    td.id = "btnRemove";
     td.rowSpan = data["subscribers"].length;
-    td.appendChild(generateButton("remove", data));
+    td.appendChild(generateButton("remove", data, "btnRemove"));
     return td
 }
 
-function generateButton(label, data){
+function generateButton(label, data, className){
     var btn = document.createElement('input');
+    btn.className += className;
     btn.type = "button";
     btn.value = label;
     btn.addEventListener("click", function(){apiDelete(data["address"], data["message"]);});

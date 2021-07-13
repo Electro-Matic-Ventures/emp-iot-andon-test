@@ -55,6 +55,15 @@ input[type=button]{
     white-space: normal;
     }
 
+input.btnRemove[type=button]{
+    border: 0px solid #000000;
+    background-color: #666666;
+    position: inherit;
+    margin: 0px;
+    height: 100px;
+    width: 90%;
+}
+
 table.scanAllButtons{
     width: 90%;
     border: 0px solid #000000;
@@ -82,6 +91,11 @@ table.kp8{
     position: fixed;
     top: 10px;
     left: 10px;
+}
+
+td.btnRemove{
+    height: 100%;
+    width: 100px;
 }
 
 td.queryButton {
