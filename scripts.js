@@ -130,6 +130,7 @@ function apiCreate(address, message, subscribers){
     );
     var endPoint = apiPrefix() + "create";
     apiCall(rawBody, endPoint);
+    updateTable(address);
 }
 
 function apiRead(address, message){
@@ -141,6 +142,7 @@ function apiRead(address, message){
     );
     var endPoint = apiPrefix() + "read";
     apiCall(rawBody, endPoint);
+    updateTable(address);
 }
 
 function apiUpdate(address, message, subscribers){
@@ -172,11 +174,14 @@ function buildTable(data, type){
     var table = document.createElement("table");
     table.className += type;
     table.id = type;
+    table.appendChild(dataEntryRow());
+    table.appendChild(blankRow());
     for (const entry in data){
         table.appendChild(buildTr(data[entry], type));
         buildSubTd(table, data[entry]["subscribers"], type);
-        table.appendChild(blankRow());
-        
+        if (parseInt(entry) < data.length - 1){
+            table.appendChild(blankRow());
+        }
     }
     return table
 }
@@ -229,7 +234,7 @@ function blankRow(){
     var tr = document.createElement('tr');
     tr.className += "blank";
     tr.id = "blank";
-    var td = document.createElement('td')
+    var td = document.createElement("td")
     td.className += "blank";
     td.id = "blank";
     td.colSpan = 4;
@@ -242,19 +247,67 @@ function removeTable(id){
 }
 
 function addRemoveButton(data){
-    var td = document.createElement('td');
+    var td = document.createElement("td");
     td.className += "btnRemove";
     td.id = "btnRemove";
     td.rowSpan = data["subscribers"].length;
-    td.appendChild(generateButton("remove", data, "btnRemove"));
+    var btn = document.createElement("input");
+    btn.className += "btnRemove";
+    btn.type = "button";
+    btn.value = "remove";
+    btn.addEventListener("click", function(){apiDelete(data["address"], data["message"]);});
+    td.appendChild(btn);
     return td
 }
 
-function generateButton(label, data, className){
-    var btn = document.createElement('input');
-    btn.className += className;
+async function addNewData(){
+    var address = document.getElementById("inpAddress").value;
+    var message = document.getElementById("inpMessage").value;
+    var name = document.getElementsByClassName("inpName")[0].value;
+    var phoneNumber = document.getElementsByClassName("inpPhoneNumber")[0].value;
+    var subscribers = '{"name":"' + name + '","phoneNumber":"' + phoneNumber + '"}'
+    apiCreate(address, message, subscribers);
+}
+
+function addAddButton(data){
+    var td = document.createElement("td");
+    td.className += "btnAdd";
+    td.id = "btnAdd";
+    td.rowSpan = 1;
+    var btn = document.createElement("input");
+    btn.className += "btnAdd";
     btn.type = "button";
-    btn.value = label;
-    btn.addEventListener("click", function(){apiDelete(data["address"], data["message"]);});
-    return btn
+    btn.value = "add";
+    btn.addEventListener("click", function(){addNewData();});
+    td.appendChild(btn);
+    return td
+}
+
+function dataEntryRow(){
+    var tr = document.createElement("tr");
+    tr.appendChild(addAddButton());
+    tr.appendChild(dataEntryElement("Address"));
+    tr.appendChild(dataEntryElement("Message"));
+    tr.appendChild(dataEntryElement("Name"));
+    tr.appendChild(dataEntryElement("PhoneNumber"));
+    return tr;
+}
+
+function dataEntryElement(label){
+    tdLbl = "td" + label;
+    inpLbl = "inp" + label;
+    var td = document.createElement("td");
+    td.className = tdLbl;
+    td.id = tdLbl;
+    var input = document.createElement("input");
+    input.type - "text";
+    input.className = inpLbl;
+    input.id = inpLbl;
+    td.appendChild(input)
+    return td
+}
+
+function updateTable(address){
+    removeTable(queryId());
+    apiQuery(address);
 }
