@@ -104,7 +104,7 @@ async function apiScan(){
     var rawBody = "";
     var endPoint = apiPrefix() + "scan";
     const data = await apiCall(rawBody, endPoint);
-    var table = buildTable(data["Items"], scanId());
+    var table = buildTable("scan", data["Items"], scanId());
     drawTable(table, "body", 0);
 }
 
@@ -116,7 +116,7 @@ async function apiQuery(address){
     );
     var endPoint = apiPrefix() + "query";
     const data = await apiCall(rawBody, endPoint);
-    var table = buildTable(data["Items"], queryId());
+    var table = buildTable(address, data["Items"], queryId());
     drawTable(table, "body", 0);
 }
 
@@ -170,11 +170,11 @@ function apiDelete(address, message){
     apiQuery(address);
 }
 
-function buildTable(data, type){
+function buildTable(address, data, type){
     var table = document.createElement("table");
     table.className += type;
     table.id = type;
-    table.appendChild(dataEntryRow());
+    table.appendChild(dataEntryRow(address));
     table.appendChild(blankRow());
     for (const entry in data){
         table.appendChild(buildTr(data[entry], type));
@@ -261,11 +261,24 @@ function addRemoveButton(data){
 }
 
 async function addNewData(){
-    var address = document.getElementById("inpAddress").value;
+    var address = document.getElementById("inpAddress").innerText;
     var message = document.getElementById("inpMessage").value;
-    var name = document.getElementsByClassName("inpName")[0].value;
-    var phoneNumber = document.getElementsByClassName("inpPhoneNumber")[0].value;
-    var subscribers = '{"name":"' + name + '","phoneNumber":"' + phoneNumber + '"}'
+    var name;
+    var phoneNumber;
+    var subscribers = [];
+    for (var entry in document.getElementsByClassName("inpName")){
+        if (entry == "length") {
+            break;
+        }
+        name = document.getElementsByClassName("inpName")[entry].value;
+        phoneNumber = document.getElementsByClassName("inpPhoneNumber")[entry].value;
+        subscribers.push(
+            {
+                "name":name,
+                "phoneNumber":phoneNumber
+            }
+        );
+    }
     apiCreate(address, message, subscribers);
 }
 
@@ -283,10 +296,14 @@ function addAddButton(data){
     return td
 }
 
-function dataEntryRow(){
+function dataEntryRow(address){
     var tr = document.createElement("tr");
     tr.appendChild(addAddButton());
-    tr.appendChild(dataEntryElement("Address"));
+    var td = document.createElement("td");
+    td.appendChild(document.createTextNode(address));
+    td.className = "inpAddress";
+    td.id = "inpAddress";
+    tr.appendChild(td);
     tr.appendChild(dataEntryElement("Message"));
     tr.appendChild(dataEntryElement("Name"));
     tr.appendChild(dataEntryElement("PhoneNumber"));
@@ -308,6 +325,6 @@ function dataEntryElement(label){
 }
 
 function updateTable(address){
-    removeTable(queryId());
+    setTimeout(500,removeTable(queryId()));
     apiQuery(address);
 }
