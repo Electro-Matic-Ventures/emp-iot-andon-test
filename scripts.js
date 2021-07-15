@@ -34,7 +34,7 @@ function toggleButton(thisButton){
         case buttonOff():
             color = buttonOn();
             var address = generateAddress(thisButton);
-            apiQuery(address);
+            updateTable(address);
             break;
         case buttonOn():
             color = buttonOff();
@@ -166,8 +166,7 @@ function apiDelete(address, message){
     );
     var endPoint = apiPrefix() + "delete";
     apiCall(rawBody, endPoint);
-    removeTable(queryId());
-    apiQuery(address);
+    updateTable(address);
 }
 
 function buildTable(address, data, type){
@@ -282,13 +281,14 @@ async function addNewData(){
     apiCreate(address, message, subscribers);
 }
 
-function addAddButton(data){
+function addAddButton(){
     var td = document.createElement("td");
     td.className += "btnAdd";
     td.id = "btnAdd";
     td.rowSpan = 1;
     var btn = document.createElement("input");
     btn.className += "btnAdd";
+    btn.id = "btnAdd";
     btn.type = "button";
     btn.value = "add";
     btn.addEventListener("click", function(){addNewData();});
@@ -298,11 +298,13 @@ function addAddButton(data){
 
 function dataEntryRow(address){
     var tr = document.createElement("tr");
+    tr.className += "dataEntry";
+    tr.id = "dataEntry";
     tr.appendChild(addAddButton());
     var td = document.createElement("td");
     td.appendChild(document.createTextNode(address));
-    td.className = "inpAddress";
-    td.id = "inpAddress";
+    td.className = "Address";
+    td.id = "Address";
     tr.appendChild(td);
     tr.appendChild(dataEntryElement("Message"));
     tr.appendChild(dataEntryElement("Name"));
@@ -310,21 +312,57 @@ function dataEntryRow(address){
     return tr;
 }
 
+function addNewSubscriberDataEntryRow(){
+    var table = document.getElementById("queryButton");
+    var rows = table.rows.length;
+    console.log(rows);
+}
+
+function makeSubscriberEntryTable(){
+
+}
+
+function makeSubScriberEntryRow(){
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.appendChild()
+    var tdPhoneNumber = document.createElement("td");
+
+}
+
 function dataEntryElement(label){
-    tdLbl = "td" + label;
+    tdLbl = label;
     inpLbl = "inp" + label;
     var td = document.createElement("td");
     td.className = tdLbl;
     td.id = tdLbl;
-    var input = document.createElement("input");
-    input.type - "text";
-    input.className = inpLbl;
-    input.id = inpLbl;
-    td.appendChild(input)
+    td.appendChild(dataEntryInput(label));
     return td
 }
 
+function dataEntryInput(label){
+    var inpLbl = "inp" + label;
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = inpLbl;
+    input.id = inpLbl;
+    if (inpLbl=="inpName"|inpLbl=="inpPhoneNumber"){
+        input.addEventListener("input", function(){addNewSubscriberDataEntryRow();});
+    }
+    return input
+}
+
 function updateTable(address){
-    setTimeout(500,removeTable(queryId()));
-    apiQuery(address);
+    try{
+        removeTable(queryId());
+    }
+    catch{
+        // needed for first button press of newly loaded page
+    }    
+    finally{
+        setTimeout(
+            function(){apiQuery(address);}, 
+            500
+        );
+    }
 }
