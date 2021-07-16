@@ -1,3 +1,5 @@
+
+
 const buttonOn = "rgb(200, 0, 0)";
 const buttonOff ="rgb(102, 102, 102)";
 const queryId = "queryButton";
@@ -6,6 +8,28 @@ function getButtonColor(thisButton){
     return getComputedStyle(thisButton)["background-color"];
 }
 
+function generateAddress(selectedButton){
+    return "00" + selectedButton.id.substr(selectedButton.id.length - 2);
+}
+
+function removeTable(id){
+    document.getElementById(id).remove();
+}
+
+function updateTable(address){
+    try{
+        removeTable(queryId);
+    }
+    catch{
+        // needed for first button press of newly loaded page
+    }    
+    finally{
+        setTimeout(
+            function(){apiQuery(address);}, 
+            500
+        );
+    }
+}
 
 function toggleButton(thisButton){
     var color = getButtonColor(thisButton);
@@ -57,48 +81,4 @@ function getSelectedButton(){
         }
     }
     return selectedButton;
-}
-
-function generateAddress(selectedButton){
-    return "00" + selectedButton.id.substr(selectedButton.id.length - 2);
-}
-
-function buildSubTd(table, data, type){
-    var tr;
-    var name;
-    var pn;
-    for (const entry in data){
-        name = data[entry]["name"];
-        pn = data[entry]["phoneNumber"];
-        if (entry=="0"){
-            tr = table.rows[table.rows.length - 1];
-            tr.appendChild(buildTd(name, 1, type));
-            tr.appendChild(buildTd(pn, 1, type));
-        }else{
-            tr = document.createElement('tr');
-            tr.className += type;
-            tr.appendChild(buildTd(name, 1, type));
-            tr.appendChild(buildTd(pn, 1, type));
-            table.appendChild(tr);
-        }
-    }
-}
-
-function drawTable(table, element, index){
-    document.getElementsByTagName(element)[index].appendChild(table);
-}
-
-function updateTable(address){
-    try{
-        removeTable(queryId());
-    }
-    catch{
-        // needed for first button press of newly loaded page
-    }    
-    finally{
-        setTimeout(
-            function(){apiQuery(address);}, 
-            500
-        );
-    }
 }

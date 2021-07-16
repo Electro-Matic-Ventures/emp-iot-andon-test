@@ -57,8 +57,4 @@ class Table{
         return this.table;
     }    
 
-    removeTable(id){
-        document.getElementById(id).remove();
-    }
-
 }
