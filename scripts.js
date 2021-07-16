@@ -317,11 +317,11 @@ function makeSubscribersEntryCell(){
     var td = document.createElement("td");
     td.classNmae += "subscribers";
     td.id = "subscribers";
-    td.appendChild(makeNewSubscriberDataEntryTable());
+    td.appendChild(makeNewSubscribersEntryTable(2));
     return td
 }
 
-function makeNewSubscriberDataEntryTable(rowsNeeded){
+function makeNewSubscribersEntryTable(rowsNeeded){
     var table = document.createElement("table");
     table.className += "subscribers";
     table.id = "subscribers";
@@ -333,19 +333,17 @@ function makeNewSubscriberDataEntryTable(rowsNeeded){
 
 function makeSubscriberEntryRow(){
     var tr = document.createElement("tr");
-    tr.className = "subscriber";
+    tr.className += "subscriber";
     tr.id = "subscriber";
-    tr.appendChild(makeSubscriberEntryCell("name"));
-    tr.appendChild(makeSubscriberEntryCell("phoneNumber"));
+    tr.appendChild(dataEntryTd("name"));
+    tr.appendChild(dataEntryTd("phoneNumber"));
     return tr
 }
 
-function dataEntryElement(label){
-    tdLbl = label;
-    inpLbl = "inp" + label;
+function dataEntryTd(label){
     var td = document.createElement("td");
-    td.className = tdLbl;
-    td.id = tdLbl;
+    td.className = label;
+    td.id = label;
     td.appendChild(dataEntryInput(label));
     return td
 }
