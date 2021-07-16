@@ -307,27 +307,37 @@ function dataEntryRow(address){
     td.id = "Address";
     tr.appendChild(td);
     tr.appendChild(dataEntryElement("Message"));
-    tr.appendChild(dataEntryElement("Name"));
-    tr.appendChild(dataEntryElement("PhoneNumber"));
+    tr.appendChild(makeSubscribersEntryCell);
+    // tr.appendChild(dataEntryElement("Name"));
+    // tr.appendChild(dataEntryElement("PhoneNumber"));
     return tr;
 }
 
-function addNewSubscriberDataEntryRow(){
-    var table = document.getElementById("queryButton");
-    var rows = table.rows.length;
-    console.log(rows);
-}
-
-function makeSubscriberEntryTable(){
-
-}
-
-function makeSubScriberEntryRow(){
-    var tr = document.createElement("tr");
+function makeSubscribersEntryCell(){
     var td = document.createElement("td");
-    td.appendChild()
-    var tdPhoneNumber = document.createElement("td");
+    td.classNmae += "subscribers";
+    td.id = "subscribers";
+    td.appendChild(makeNewSubscriberDataEntryTable());
+    return td
+}
 
+function makeNewSubscriberDataEntryTable(rowsNeeded){
+    var table = document.createElement("table");
+    table.className += "subscribers";
+    table.id = "subscribers";
+    for (var row = 0; row < rowsNeeded; row++){
+        table.className(makeSubscriberEntryRow());
+    }
+    return table
+}
+
+function makeSubscriberEntryRow(){
+    var tr = document.createElement("tr");
+    tr.className = "subscriber";
+    tr.id = "subscriber";
+    tr.appendChild(makeSubscriberEntryCell("name"));
+    tr.appendChild(makeSubscriberEntryCell("phoneNumber"));
+    return tr
 }
 
 function dataEntryElement(label){
