@@ -1,16 +1,10 @@
-
+import * as api from "api.js";
 
 const buttonOn = "rgb(200, 0, 0)";
-const buttonOff ="rgb(102, 102, 102)";
+const buttonOff = "rgb(102, 102, 102)";
 const queryId = "queryButton";
 
-function getButtonColor(thisButton){
-    return getComputedStyle(thisButton)["background-color"];
-}
 
-function generateAddress(selectedButton){
-    return "00" + selectedButton.id.substr(selectedButton.id.length - 2);
-}
 
 function removeTable(id){
     document.getElementById(id).remove();
