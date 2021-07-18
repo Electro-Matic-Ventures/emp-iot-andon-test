@@ -77,7 +77,72 @@ class Table{
         this.data = data;
         this.label = label;
         this.address = data[0]["address"];
+        this.isSubTable = this.isSubTable();
         this.table = this.buildTable();
+    }
+
+    isSubTable(){
+        if (this.data.length == 0){
+            return false;
+        }
+        var keys = Object.keys(this.data[0]);
+        if (keys[0] == "name"){
+            return true
+        }else{
+            return false
+        }
+    }
+
+    blankTr(){
+        var tr = document.createElement('tr');
+        tr.classList.add("blank");
+        tr.id = "blank";
+        tr.appendChild(this.blankTd(5));
+        return tr
+    } 
+
+    blankTd(colSpan){
+        var td = document.createElement("td")
+        td.classList.add("blank");
+        td.id = "blank";
+        td.colSpan = colSpan;
+        return td
+    }
+
+    addRemoveButton(rowData){
+        var btn = document.createElement("input");
+        btn.classList.add("btnRemove");
+        btn.type = "button";
+        btn.value = "remove";
+        btn.addEventListener(
+            "click", 
+            function(){
+                this.apiDelete(rowData["address"], rowData["message"]);
+            }
+        );
+        return btn
+    }
+
+    buildTd(contents, rowSpan){
+        var td = document.createElement("td");
+        td.classList.add(this.label);
+        td.id = this.label;
+        td.rowSpan = rowSpan;
+        td.appendChild(contents);
+        return td
+    }
+
+    buildTr(rowData){
+        var tr = document.createElement("tr");
+        tr.classList.add(this.label);
+        var rowSpan = rowData["subscribers"].length;
+        tr.appendChild(this.buildTd(this.addRemoveButton(rowData), rowSpan));
+        tr.appendChild(this.blankTd(1));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), rowSpan));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["message"]), rowSpan));
+        var subTable = new Table(rowData["subscribers"]);
+        tr.appendChild(subTable.table);
+        return tr
     }
 
     buildTable(){
@@ -94,41 +159,6 @@ class Table{
             }
         }
         return table;
-    }
-
-    buildTr(rowData){
-        var tr = document.createElement("tr");
-        tr.classList.add(this.label);
-        var rowSpan = rowData["subscribers"].length;
-        // tr.appendChild(this.addRemoveButton(rowData));
-        tr.appendChild(this.buildTd(rowData["address"], rowSpan));
-        tr.appendChild(this.buildTd(rowData["message"], rowSpan));
-        return tr
-    }
-
-    buildTd(data, rowSpan){
-        var td = document.createElement("td");
-        td.classList.add(this.label);
-        td.id = this.label;
-        td.rowSpan = rowSpan;
-        td.appendChild(document.createTextNode(data));
-        return td
-    }
-
-    blankTr(){
-        var tr = document.createElement('tr');
-        tr.classList.add("blank");
-        tr.id = "blank";
-        this.blankTd(5);
-        tr.appendChild(td);
-        return tr
-    } 
-
-    blankTd(colSpan){
-        var td = document.createElement("td")
-        td.classList.add("blank");
-        td.id = "blank";
-        td.colSpan = colSpan;
     }
 
 }
