@@ -1,10 +1,219 @@
-import * as api from "api.js";
-
 const buttonOn = "rgb(200, 0, 0)";
-const buttonOff = "rgb(102, 102, 102)";
+const buttonOff = "rgb(100, 100, 100)";
 const queryId = "queryButton";
+const apiPrefix = "https://p1ba5tufy8.execute-api.us-east-2.amazonaws.com/emp-iot-andon/";
 
+class Button{
 
+    constructor(thisButton){
+        this.button = thisButton;
+        this.classList = thisButton.classList;
+        this.color = this.getButtonColor(thisButton);
+        this.id = thisButton.id;
+        this.btnOn = false;
+        this.address = this.generateAddress(this.id);
+    }
+
+    generateAddress(id){
+        return "00" + id.substr(id.length - 2)
+    }
+
+    address(){
+        return this.address
+    }
+
+    getButtonColor(thisButton){
+        return getComputedStyle(thisButton)["background-color"];
+    }
+
+    toggleButton(){
+        switch (this.color){
+            case buttonOff:
+                this.buttonOn();
+                break;
+            case buttonOn:
+                this.buttonOff();
+                break;
+        }
+    }
+
+    buttonOn(){
+        this.color = buttonOn;
+        this.btnOn = true;
+        this.classStateOn();
+        this.drawColor();
+    }
+
+    buttonOff(){
+        this.color = buttonOff;
+        this.btnOn = false;
+        this.classStateOff();
+        this.drawColor();
+    }
+
+    drawColor(){
+        this.button.style.backgroundColor = this.color;
+    }
+
+    classStateOn(){
+        this.button.classList.add("btnOn");
+        try{
+            this.button.classList.remove("btnOff");
+        }catch{}
+    }
+
+    classStateOff(){
+        this.button.classList.add("btnOff");
+           try {
+               this.button.classList.remove("btnOn");
+            }catch{}
+    }
+
+}
+
+class Table{
+
+    constructor(data, label){
+        this.data = data;
+        this.label = label;
+        this.address = data[0]["address"];
+        this.table = this.buildTable();
+    }
+
+    buildTable(){
+        var table = document.createElement("table");
+        table.classList.add(this.label);
+        table.id = this.label;
+        // table.appendChild(dataEntryRow(this.address));
+        table.appendChild(this.blankTr());
+        for (const entry in this.data){
+            table.appendChild(this.buildTr(this.data[entry]));
+            // this.buildSubTd(table, this.data[entry]["subscribers"], this.label);
+            if (parseInt(entry) < this.data.length - 1){
+                table.appendChild(this.blankTr());
+            }
+        }
+        return table;
+    }
+
+    buildTr(rowData){
+        var tr = document.createElement("tr");
+        tr.classList.add(this.label);
+        var rowSpan = rowData["subscribers"].length;
+        // tr.appendChild(this.addRemoveButton(rowData));
+        tr.appendChild(this.buildTd(rowData["address"], rowSpan));
+        tr.appendChild(this.buildTd(rowData["message"], rowSpan));
+        return tr
+    }
+
+    buildTd(data, rowSpan){
+        var td = document.createElement("td");
+        td.classList.add(this.label);
+        td.id = this.label;
+        td.rowSpan = rowSpan;
+        td.appendChild(document.createTextNode(data));
+        return td
+    }
+
+    blankTr(){
+        var tr = document.createElement('tr');
+        tr.classList.add("blank");
+        tr.id = "blank";
+        this.blankTd(5);
+        tr.appendChild(td);
+        return tr
+    } 
+
+    blankTd(colSpan){
+        var td = document.createElement("td")
+        td.classList.add("blank");
+        td.id = "blank";
+        td.colSpan = colSpan;
+    }
+
+}
+
+async function apiCall(rawBody, endPoint){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type","application/json");
+    var requestOptions = {
+        method : "POST",
+        headers : myHeaders,
+        body : rawBody,
+        redirect : "follow"
+    };
+    const response = await fetch(endPoint, requestOptions);
+    const data = await response.json();
+    return data["body"];
+}
+
+async function apiScan(){
+    var rawBody = "";
+    var endPoint = apiPrefix + "scan";
+    const data = await apiCallr(rawBody, endPoint);
+    return data
+}
+
+async function apiQuery(address){
+    var rawBody = JSON.stringify(
+        {
+            "address":address
+        }
+    );
+    var endPoint = apiPrefix + "query";
+    const data = await apiCall(rawBody, endPoint);
+    return data
+}
+
+async function apiCreate(address, message, subscribers){
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message, 
+            "subscribers":subscribers
+        }
+    );
+    var endPoint = apiPrefix + "create";
+    const data = await apiCall(rawBody, endPoint);
+    return data
+}
+
+async function apiRead(address, message){
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message
+        }
+    );
+    var endPoint = apiPrefix + "read";
+    const data = await apiCall(rawBody, endPoint);
+    return data
+}
+
+async function apiUpdate(address, message, subscribers){
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message, 
+            "subscribers":subscribers
+        }
+    );
+    var endPoint = apiPrefix + "update";
+    const data = await apiCall(rawBody, endPoint);
+    return data
+}
+
+async function apiDelete(address, message){
+    var rawBody = JSON.stringify(
+        {
+            "address":address, 
+            "message":message
+        }
+    );
+    var endPoint = apiPrefix + "delete";
+    const data = await apiCall(rawBody, endPoint);
+    return data
+}
 
 function removeTable(id){
     document.getElementById(id).remove();
@@ -25,54 +234,35 @@ function updateTable(address){
     }
 }
 
-function toggleButton(thisButton){
-    var color = getButtonColor(thisButton);
-    switch (color){
-        case buttonOff:
-            color = buttonOn;
-            break;
-        case buttonOn:
-            color = buttonOff;
-            break;
-    }
-    return color;
-}
-
-function toggleGroup(thisButton){
-    var buttons = document.getElementsByClassName("kp8Button");
-    var color;
-    var evalBtnId = thisButton.id;
-    var idxBtnId;
+function toggleGroup(evalBtn){
+    var buttons = document.getElementsByClassName(evalBtn.classList[0]);
+    var idxBtn;
     for (var pBtn in buttons){
         if (pBtn == "length"){
             break;
         }
-        idxBtnId = buttons[pBtn].id;
-        if (idxBtnId == evalBtnId){
-            color = toggleButton(thisButton);
+        idxBtn = new Button(buttons[pBtn]);
+        if (idxBtn.id == evalBtn.id){
+            evalBtn.toggleButton();
         }else{
-            color = buttonOff;
-            try {
-                removeTable(queryId());
-            }catch{}
+            idxBtn.buttonOff();
         }
-        buttons[pBtn].style.backgroundColor = color;
     }
 }
 
-function getSelectedButton(){
-    var buttons = document.getElementsByClassName("kp8Button");
-    var color;
-    var selectedButton = "none";
-    for (var pBtn in buttons){
-        if (pBtn == "length"){
-            break;
+function addTable(table){
+    document.getElementsByTagName("body")[0].appendChild(table);
+}
+
+async function buttonAction(thisButton){
+    var evalBtn = new Button(thisButton);
+    toggleGroup(evalBtn);
+    if (evalBtn.btnOn){
+        var data = await apiQuery(evalBtn.address);
+        if (data["Items"].length > 0){
+            var table = new Table(data["Items"], "querryButton");
+            addTable(table.table);
         }
-        color = getButtonColor(buttons[pBtn]);
-        if (color == buttonOn){
-            selectedButton = buttons[pBtn].id;
-            break;
-        }
+        console.log(data);
     }
-    return selectedButton;
 }

@@ -125,7 +125,7 @@ table.scanAllButtons{
     border: 0px solid #000000;
 }
 
-table.queryButton{
+table.querryButton{
     border: 0px solid #000000;
     width: 900px;
     position: fixed;
@@ -138,7 +138,7 @@ td.blank {
     background-color: #536172;
 }
 
-tr.queryButton {
+tr.querryButton {
     background-color: #a9b8d6;
 }
 
@@ -156,7 +156,7 @@ td.btnRemove{
     text-align: center;
 }
 
-td.queryButton {
+td.querryButton {
     padding: 10px;
     padding-left: 25px;
 }
