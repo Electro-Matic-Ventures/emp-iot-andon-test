@@ -127,7 +127,7 @@ table.scanAllButtons{
 
 table.querryButton{
     border: 0px solid #000000;
-    width: 900px;
+    width: 1200px;
     position: fixed;
     top: 10px;
     left: 300px;
@@ -159,4 +159,9 @@ td.btnRemove{
 td.querryButton {
     padding: 10px;
     padding-left: 25px;
+}
+
+table.subscribers{
+    border: 0px solid #000000;
+    width: 500px;
 }

@@ -77,7 +77,6 @@ class Table{
         this.data = data;
         this.label = label;
         this.address = data[0]["address"];
-        this.isSubTable = this.isSubTable();
         this.table = this.buildTable();
     }
 
@@ -133,6 +132,14 @@ class Table{
     }
 
     buildTr(rowData){
+        if (this.isSubTable()){
+            return this.subscriberRow(rowData)
+        }else{
+            return this.messageRow(rowData)
+        }
+    }
+
+    messageRow(rowData){
         var tr = document.createElement("tr");
         tr.classList.add(this.label);
         var rowSpan = rowData["subscribers"].length;
@@ -140,8 +147,17 @@ class Table{
         tr.appendChild(this.blankTd(1));
         tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), rowSpan));
         tr.appendChild(this.buildTd(document.createTextNode(rowData["message"]), rowSpan));
-        var subTable = new Table(rowData["subscribers"]);
-        tr.appendChild(subTable.table);
+        var subTable = new Table(rowData["subscribers"], "subscribers");
+        tr.appendChild(this.buildTd(subTable.table, 1));
+        return tr
+    }
+
+    subscriberRow(rowData){
+        var tr = document.createElement("tr");
+        tr.classList.add(this.label);
+        tr.appendChild(this.buildTd(this.addRemoveButton(rowData), 1));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["name"]), 1));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["phoneNumber"]), 1));
         return tr
     }
 
