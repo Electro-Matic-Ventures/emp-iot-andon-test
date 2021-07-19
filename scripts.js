@@ -92,39 +92,86 @@ class Table{
         }
     }
 
-    blankTr(){
+    blankTr(thickness, colSpan){
         var tr = document.createElement('tr');
         tr.classList.add("blank");
+        tr.classList.add(thickness);
         tr.id = "blank";
-        tr.appendChild(this.blankTd(5));
+        tr.appendChild(this.blankTd(colSpan, "rowSpan"));
         return tr
     } 
 
-    blankTd(colSpan){
+    blankTd(colSpan, thickness){
         var td = document.createElement("td")
         td.classList.add("blank");
+        td.classList.add(thickness);
         td.id = "blank";
         td.colSpan = colSpan;
         return td
     }
 
-    addRemoveButton(rowData){
+    drawRemoveButton(rowData){
         var btn = document.createElement("input");
         btn.classList.add("btnRemove");
+        btn.id = "btnRemove";
         btn.type = "button";
         btn.value = "remove";
         btn.addEventListener(
             "click", 
             function(){
-                this.apiDelete(rowData["address"], rowData["message"]);
+                apiDelete(rowData["address"], rowData["message"]);
             }
         );
         return btn
     }
 
-    buildTd(contents, rowSpan){
+    drawAddButton(rowData){
+        var btn = document.createElement("input");
+        btn.classList.add("btnAdd");
+        btn.id = "btnAdd";
+        btn.type = "button";
+        btn.value = "add";
+        btn.addEventListener(
+            "click", 
+            function(){
+                addNewData(rowData);
+            }
+        );
+        return btn
+    }
+
+    drawUpdateButton(rowData){
+        var btn = document.createElement("input");
+        btn.classList.add("btnUpdate");
+        btn.id = "btnUpdate";
+        btn.type = "button";
+        btn.value = "update";
+        btn.addEventListener(
+            "click",
+            function(){
+                updateData(rowData);
+            }
+        );
+        return btn
+    }
+
+    drawInputTextField(className){
+        var inp = document.createElement("intput");
+        inp.classList.add(className);
+        inp.id = className;
+        inp.type = "text";
+        inp.addEventListener(
+            "input",
+            function(){
+                changeButton();
+            }
+        );
+        return inp
+    }
+
+    buildTd(contents, rowSpan, className){
         var td = document.createElement("td");
-        td.classList.add(this.label);
+        td.classList.add(className);
         td.id = this.label;
         td.rowSpan = rowSpan;
         td.appendChild(contents);
@@ -142,36 +189,77 @@ class Table{
     messageRow(rowData){
         var tr = document.createElement("tr");
         tr.classList.add(this.label);
-        var rowSpan = rowData["subscribers"].length;
-        tr.appendChild(this.buildTd(this.addRemoveButton(rowData), rowSpan));
-        tr.appendChild(this.blankTd(1));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), rowSpan));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["message"]), rowSpan));
+        tr.appendChild(this.buildTd(this.drawRemoveButton(rowData), 1, "control"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), 1, "address"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["message"]), 1, "message"));
+        tr.appendChild(this.blankTd(1, "thin"));
         var subTable = new Table(rowData["subscribers"], "subscribers");
-        tr.appendChild(this.buildTd(subTable.table, 1));
+        tr.appendChild(this.buildTd(subTable.table, 1, "subscribers"));
         return tr
     }
 
     subscriberRow(rowData){
         var tr = document.createElement("tr");
         tr.classList.add(this.label);
-        tr.appendChild(this.buildTd(this.addRemoveButton(rowData), 1));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["name"]), 1));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["phoneNumber"]), 1));
+        tr.appendChild(this.buildTd(this.drawRemoveButton(rowData), 1, "control"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["name"]), 1, "name"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["phoneNumber"]), 1, "phoneNumber"));
         return tr
+    }
+
+    inputMessageRow(rowData){
+        var tr = document.createElement("tr");
+        tr.classList.add("input");
+        tr.appendChild(this.buildTd(this.drawAddButton(), 1, "control"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), 1, "address")); 
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(this.drawInputTextField("inpMessage"), 1, "textField"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.inputSubTable(rowData));
+        return tr
+    }
+
+    inputSubTable(rowData){
+        var tb = document.createElement("table");
+        var tr = document.createElement("tr");
+        tr.appendChild(this.buildTd(this.drawUpdateButton(rowData),1,"control"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(this.drawInputTextField("inpName"), 1, "textField"));
+        tr.appendChild(this.blankTd(1, "thin"));
+        tr.appendChild(this.buildTd(this.drawInputTextField("inpPhoneNumber"), 1, "textField"));
+        tb.appendChild(tr);
+        return tb
     }
 
     buildTable(){
         var table = document.createElement("table");
         table.classList.add(this.label);
         table.id = this.label;
-        // table.appendChild(dataEntryRow(this.address));
-        table.appendChild(this.blankTr());
+        var thickness = "thick";
+        var colSpan = 7;
+        if (this.isSubTable()){
+            thickness = "thin";
+            colSpan = 5;
+        }
+        var rowData = {
+            address:"0000", 
+            message:"static message", 
+            subscribers:{
+                name:"john machado", 
+                phoneNumber:"242-458-8558"
+            }
+        }
+        table.appendChild(this.inputMessageRow(rowData));
+        table.appendChild(this.blankTr(thickness, colSpan));
         for (const entry in this.data){
             table.appendChild(this.buildTr(this.data[entry]));
-            // this.buildSubTd(table, this.data[entry]["subscribers"], this.label);
             if (parseInt(entry) < this.data.length - 1){
-                table.appendChild(this.blankTr());
+                table.appendChild(this.blankTr(thickness, colSpan));
             }
         }
         return table;
@@ -306,9 +394,19 @@ async function buttonAction(thisButton){
     if (evalBtn.btnOn){
         var data = await apiQuery(evalBtn.address);
         if (data["Items"].length > 0){
-            var table = new Table(data["Items"], "querryButton");
-            addTable(table.table);
+            var table = new Table(data["Items"], queryId);
+            try{
+                removeTable(queryId);
+            }
+            catch{
+            }
+            finally{
+                addTable(table.table);
+            }
         }
-        console.log(data);
+    }else{
+        try{
+            removeTable(queryId);
+        }catch{}
     }
 }
