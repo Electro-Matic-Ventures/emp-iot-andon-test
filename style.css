@@ -206,3 +206,9 @@ table.subscribers{
     border: 0px solid #000000;
     width: 100%;
 }
+
+input.textField {
+    border: 0px solid #000000;
+    width: 100%;
+    background-color: #FFFFFF;
+}

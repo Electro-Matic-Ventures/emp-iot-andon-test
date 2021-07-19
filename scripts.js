@@ -171,7 +171,9 @@ class Table{
 
     buildTd(contents, rowSpan, className){
         var td = document.createElement("td");
-        td.classList.add(className);
+        for (var entry in className) {
+            td.classList.add(className[entry]);
+        }
         td.id = this.label;
         td.rowSpan = rowSpan;
         td.appendChild(contents);
@@ -189,11 +191,11 @@ class Table{
     messageRow(rowData){
         var tr = document.createElement("tr");
         tr.classList.add(this.label);
-        tr.appendChild(this.buildTd(this.drawRemoveButton(rowData), 1, "control"));
+        tr.appendChild(this.buildTd(this.drawRemoveButton(rowData), 1, ["control"]));
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), 1, "address"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), 1, ["address"]));
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["message"]), 1, "message"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["message"]), 1, ["message"]));
         tr.appendChild(this.blankTd(1, "thin"));
         var subTable = new Table(rowData["subscribers"], "subscribers");
         tr.appendChild(this.buildTd(subTable.table, 1, "subscribers"));
@@ -203,22 +205,22 @@ class Table{
     subscriberRow(rowData){
         var tr = document.createElement("tr");
         tr.classList.add(this.label);
-        tr.appendChild(this.buildTd(this.drawRemoveButton(rowData), 1, "control"));
+        tr.appendChild(this.buildTd(this.drawRemoveButton(rowData), 1, ["control"]));
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["name"]), 1, "name"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["name"]), 1, ["name"]));
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["phoneNumber"]), 1, "phoneNumber"));
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["phoneNumber"]), 1, ["phoneNumber"]));
         return tr
     }
 
     inputMessageRow(rowData){
         var tr = document.createElement("tr");
         tr.classList.add("input");
-        tr.appendChild(this.buildTd(this.drawAddButton(), 1, "control"));
+        tr.appendChild(this.buildTd(this.drawAddButton(), 1, ["control"]));
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), 1, "address")); 
+        tr.appendChild(this.buildTd(document.createTextNode(rowData["address"]), 1, ["address"])); 
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(this.drawInputTextField("inpMessage"), 1, "textField"));
+        tr.appendChild(this.buildTd(this.drawInputTextField("inpMessage"), 1, ["message","textField"]));
         tr.appendChild(this.blankTd(1, "thin"));
         tr.appendChild(this.inputSubTable(rowData));
         return tr
@@ -227,11 +229,11 @@ class Table{
     inputSubTable(rowData){
         var tb = document.createElement("table");
         var tr = document.createElement("tr");
-        tr.appendChild(this.buildTd(this.drawUpdateButton(rowData),1,"control"));
+        tr.appendChild(this.buildTd(this.drawUpdateButton(rowData),1,["control"]));
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(this.drawInputTextField("inpName"), 1, "textField"));
+        tr.appendChild(this.buildTd(this.drawInputTextField("inpName"), 1, ["name", "textField"]));
         tr.appendChild(this.blankTd(1, "thin"));
-        tr.appendChild(this.buildTd(this.drawInputTextField("inpPhoneNumber"), 1, "textField"));
+        tr.appendChild(this.buildTd(this.drawInputTextField("inpPhoneNumber"), 1, ["phoneNumber", "textField"]));
         tb.appendChild(tr);
         return tb
     }
@@ -366,6 +368,10 @@ function updateTable(address){
             500
         );
     }
+}
+
+function changeButton(){
+    var stopHere = true;
 }
 
 function toggleGroup(evalBtn){
